@@ -1,0 +1,15 @@
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\bin\Debug\net10.0\CinemaManagement.BLL.deps.json
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\bin\Debug\net10.0\CinemaManagement.BLL.dll
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\bin\Debug\net10.0\CinemaManagement.BLL.pdb
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\bin\Debug\net10.0\CinemaManagement.DAL.dll
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\bin\Debug\net10.0\CinemaManagement.DAL.pdb
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\obj\Debug\net10.0\CinemaManagement.BLL.csproj.AssemblyReference.cache
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\obj\Debug\net10.0\CinemaManagement.BLL.GeneratedMSBuildEditorConfig.editorconfig
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\obj\Debug\net10.0\CinemaManagement.BLL.AssemblyInfoInputs.cache
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\obj\Debug\net10.0\CinemaManagement.BLL.AssemblyInfo.cs
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\obj\Debug\net10.0\CinemaManagement.BLL.csproj.CoreCompileInputs.cache
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\obj\Debug\net10.0\CinemaMa.4A3853DF.Up2Date
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\obj\Debug\net10.0\CinemaManagement.BLL.dll
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\obj\Debug\net10.0\refint\CinemaManagement.BLL.dll
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\obj\Debug\net10.0\CinemaManagement.BLL.pdb
+C:\tailieu\rap-phim\CinemaManagementSolution\CinemaManagement.BLL\obj\Debug\net10.0\ref\CinemaManagement.BLL.dll
