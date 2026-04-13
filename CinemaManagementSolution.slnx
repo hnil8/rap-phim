@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="CinemaManagement.BLL/CinemaManagement.BLL.csproj" />
+  <Project Path="CinemaManagement.DAL/CinemaManagement.DAL.csproj" />
+  <Project Path="CinemaManagement.UI/CinemaManagement.UI.csproj" />
+  <Project Path="CinemaManagement.Web/CinemaManagement.Web.csproj" />
+</Solution>
