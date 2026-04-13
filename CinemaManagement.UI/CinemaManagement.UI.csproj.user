@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Compile Update="Forms\frmAdmin_DoanhThu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmAdmin_LichChieu.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmAdmin_NhanVien.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmAdmin_Phim.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmAdmin_SanPham.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmAdmin_UuDai.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmAdmin_WebPreview.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmStaff_POS.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Forms\frmStaff_QuanLyDon.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="frmQuanLyKhachHang.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UserControls\ucSeat.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
+</Project>
