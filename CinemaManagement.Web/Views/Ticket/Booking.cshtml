@@ -1,0 +1,257 @@
+@using CinemaManagement.Web.Models.TicketViewModels
+@model BookingViewModel
+@{
+    ViewData["Title"] = "Chọn Ghế";
+    var lichChieu = Model.Showtime;
+    var seatsByRow = Model.SeatsByRow;
+    var maxCol = Model.MaxCol;
+}
+
+<div style="max-width:1280px; margin:0 auto; padding:32px 24px;">
+
+    <!-- Breadcrumb -->
+    <nav style="font-size:0.875rem; color:var(--text-muted); margin-bottom:24px;">
+        <a href="/">Trang chủ</a> /
+        <a href="/Movie/Details/@lichChieu?.PhimId">@lichChieu?.TenPhim</a> /
+        <span>Chọn Ghế</span>
+    </nav>
+
+    <div class="booking-layout">
+        <!-- LEFT: Seat Map -->
+        <div>
+            <!-- Movie Info Bar -->
+            <div style="display:flex; gap:16px; align-items:center; padding:16px 20px; background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:16px; margin-bottom:24px;">
+                <div style="flex:1;">
+                    <div style="font-size:1.1rem; font-weight:700;">@lichChieu?.TenPhim</div>
+                    <div style="font-size:0.875rem; color:var(--text-secondary); margin-top:4px;">
+                        📍 @lichChieu?.TenPhong <span style="margin:0 8px;">·</span>
+                        🕐 @lichChieu?.GioBatDauText - @lichChieu?.GioKetThucText
+                        <span style="margin:0 8px;">·</span>
+                        📅 @lichChieu?.NgayChieuText
+                        <span style="margin:0 8px;">·</span>
+                        <span style="color:var(--neon-cyan);">@lichChieu?.LoaiPhong</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screen -->
+            <div class="seat-container">
+                <div class="screen-bar"></div>
+                <div class="screen-label">MÀN HÌNH</div>
+
+                <!-- Seat Grid -->
+                <div class="seat-grid-wrapper">
+                    @foreach (var row in seatsByRow)
+                    {
+                        <div class="seat-row">
+                            <span class="seat-row-label">@row.Key</span>
+
+                            @{
+                                var prevCol = 0;
+                            }
+                            @foreach (var seat in row.Value)
+                            {
+                                // Khoảng cách lối đi
+                                if (seat.CotGhe > prevCol + 1)
+                                {
+                                    <div class="seat-cell-gap"></div>
+                                }
+                                prevCol = seat.CotGhe;
+
+                                var loaiClass = seat.LoaiGhe?.ToLower() switch {
+                                    "vip"      => "seat-vip",
+                                    "sweetbox" => "seat-sweetbox",
+                                    _          => ""
+                                };
+                                var width = seat.LoaiGhe?.ToLower() == "sweetbox" ? "style=\"width:72px\"" : "";
+                            }
+                                <button type="button"
+                                        id="seat-@seat.LichChieuGheId"
+                                        class="seat @seat.CssClass @loaiClass"
+                                        data-id="@seat.LichChieuGheId"
+                                        data-name="@seat.TenGhe"
+                                        data-type="@seat.LoaiGhe"
+                                        data-price="@seat.GiaBan"
+                                        @(seat.CoTheChon ? "" : "disabled")
+                                        title="@seat.TenGhe — @seat.LoaiGhe — @seat.GiaBan.ToString("N0")đ"
+                                        @Html.Raw(width)>
+                                    @seat.TenGhe
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <!-- Legend -->
+                <div class="seat-legend">
+                    @foreach (var item in new[] {
+                        ("seat-available", "Trống"),
+                        ("seat-available selected", "Đang chọn"),
+                        ("seat-available seat-vip", "VIP"),
+                        ("seat-available seat-sweetbox", "Sweetbox"),
+                        ("seat-sold", "Đã bán"),
+                        ("seat-locked", "Đang giữ")
+                    })
+                    {
+                        <div class="legend-item">
+                            <div class="legend-seat @item.Item1" style="display:inline-block;"></div>
+                            <span>@item.Item2</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT: Booking Summary -->
+        <div class="booking-summary">
+            <div class="booking-summary-title">Tóm Tắt Đặt Vé</div>
+
+            <!-- Selected Seats -->
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">Ghế đã chọn:</div>
+            <div class="selected-seats-list" id="selected-seats-display">
+                <span style="color:var(--text-muted); font-size:0.875rem;">Chưa chọn ghế nào</span>
+            </div>
+
+            <!-- Promo Code -->
+            <div style="margin-top:16px;">
+                <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">Mã khuyến mãi:</div>
+                <div class="promo-input-group">
+                    <input type="text" id="promo-code" placeholder="Nhập mã..." />
+                    <button type="button" class="btn btn-secondary btn-sm" id="btn-apply-promo">Áp dụng</button>
+                </div>
+            </div>
+
+            <!-- Price Breakdown -->
+            <div class="price-breakdown">
+                <div class="price-row">
+                    <span>Giá vé (<span id="seat-count">0</span> ghế)</span>
+                    <span id="seats-total">0đ</span>
+                </div>
+                <div class="price-row" id="promo-row" style="display:none;">
+                    <span>Giảm giá</span>
+                    <span id="promo-value" style="color:var(--neon-green);">-0đ</span>
+                </div>
+                <div class="price-row total">
+                    <span>Tổng cộng</span>
+                    <span id="grand-total">0đ</span>
+                </div>
+            </div>
+
+            <!-- Doi tuong -->
+            <div style="margin-top:16px;">
+                <label class="form-label">Đối tượng:</label>
+                <select id="doi-tuong" class="form-control">
+                    <option value="NguoiLon">Người lớn</option>
+                    <option value="SinhVien">Sinh viên</option>
+                    <option value="TreEm">Trẻ em</option>
+                    <option value="NguoiCaoTuoi">Người cao tuổi</option>
+                </select>
+            </div>
+
+            <!-- Confirm Button -->
+            <form asp-action="Booking" asp-controller="Ticket" method="post" id="booking-form" style="margin-top:20px;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="LichChieuId" value="@lichChieu.LichChieuId" />
+                <input type="hidden" name="SelectedSeats" id="selected-seats-json" value="[]" />
+                <input type="hidden" name="MaKhuyenMai" id="promo-code-hidden" />
+                <input type="hidden" name="DoiTuong" id="doi-tuong-hidden" value="NguoiLon" />
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="btn-confirm-booking" disabled>
+                    🎫 Xác Nhận Đặt Vé
+                </button>
+            </form>
+
+            <p style="font-size:0.75rem; color:var(--text-muted); text-align:center; margin-top:12px; line-height:1.5;">
+                Ghế được giữ tối đa <strong style="color:var(--neon-yellow);">10 phút</strong> sau khi xác nhận.
+            </p>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+// ===== SEAT SELECTION LOGIC =====
+const selectedSeats = new Map(); // id → {name, price, type}
+const MAX_SEATS = 8;
+
+function formatVnd(n) {
+    return n.toLocaleString('vi-VN') + 'đ';
+}
+
+function updateSummary() {
+    const seatCount = selectedSeats.size;
+    const totalPrice = [...selectedSeats.values()].reduce((s, v) => s + v.price, 0);
+
+    // Update seat count & price
+    document.getElementById('seat-count').textContent = seatCount;
+    document.getElementById('seats-total').textContent = formatVnd(totalPrice);
+    document.getElementById('grand-total').textContent  = formatVnd(totalPrice);
+
+    // Update seat tags display
+    const display = document.getElementById('selected-seats-display');
+    if (seatCount === 0) {
+        display.innerHTML = '<span style="color:var(--text-muted); font-size:0.875rem;">Chưa chọn ghế nào</span>';
+    } else {
+        display.innerHTML = [...selectedSeats.values()].map(s =>
+            `<span class="selected-seat-tag">🪑 ${s.name} <small style="opacity:0.7">${s.type}</small></span>`
+        ).join('');
+    }
+
+    // Update hidden JSON
+    document.getElementById('selected-seats-json').value = JSON.stringify([...selectedSeats.keys()]);
+
+    // Enable/disable confirm button
+    const btn = document.getElementById('btn-confirm-booking');
+    btn.disabled = seatCount === 0;
+}
+
+// Attach click handlers to all available seats
+document.querySelectorAll('.seat.seat-available').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const id    = parseInt(this.dataset.id);
+        const name  = this.dataset.name;
+        const price = parseFloat(this.dataset.price);
+        const type  = this.dataset.type;
+
+        if (selectedSeats.has(id)) {
+            // Deselect
+            selectedSeats.delete(id);
+            this.classList.remove('selected');
+        } else {
+            if (selectedSeats.size >= MAX_SEATS) {
+                alert(`Chỉ được chọn tối đa ${MAX_SEATS} ghế.`);
+                return;
+            }
+            selectedSeats.set(id, { name, price, type });
+            this.classList.add('selected');
+        }
+        updateSummary();
+    });
+});
+
+// Sync doi tuong hidden input
+document.getElementById('doi-tuong').addEventListener('change', function() {
+    document.getElementById('doi-tuong-hidden').value = this.value;
+});
+
+// Promo code
+document.getElementById('btn-apply-promo').addEventListener('click', function() {
+    const code = document.getElementById('promo-code').value.trim();
+    document.getElementById('promo-code-hidden').value = code;
+    if (code) {
+        document.getElementById('promo-row').style.display = 'flex';
+        document.getElementById('promo-value').textContent = '-Sẽ tính khi xác nhận';
+    }
+});
+
+// One-Click Shield on confirm
+document.getElementById('btn-confirm-booking').addEventListener('click', function(e) {
+    if (selectedSeats.size === 0) { e.preventDefault(); return; }
+    this.disabled = true;
+    this.textContent = '⏳ Đang xử lý...';
+});
+
+// Initialize
+updateSummary();
+</script>
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="NEON-FLORA Cinema — Rạp chiếu phim phong cách Cyberpunk độc đáo tại Hà Nội. Đặt vé online nhanh chóng, chọn ghế theo sơ đồ thực tế." />
+    <title>@(ViewData["Title"] != null ? ViewData["Title"] + " | " : "")NEON-FLORA Cinema</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Site CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <!-- Logo -->
+        <a class="navbar-brand" href="/" id="nav-logo">
+            <span class="brand-neon">NEON</span><span class="brand-flora">·FLORA</span>
+            <span class="brand-tag">CINEMA</span>
+        </a>
+
+        <!-- Nav Links -->
+        <ul class="nav-links" id="nav-links">
+            <li><a href="/" class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">Trang Chủ</a></li>
+            <li><a href="/Movie?trangThai=DangChieu" class="nav-link">Đang Chiếu</a></li>
+            <li><a href="/Movie?trangThai=SapChieu" class="nav-link">Sắp Chiếu</a></li>
+        </ul>
+
+        <!-- Auth Area -->
+        <div class="nav-auth">
+            @if (User.Identity?.IsAuthenticated == true)
+            {
+                <div class="nav-user-menu" id="nav-user-menu">
+                    <button class="btn-user" id="btn-user-toggle">
+                        <span class="user-avatar">@User.Identity.Name?.Substring(0, 1).ToUpper()</span>
+                        <span class="user-name">@User.Identity.Name</span>
+                        <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M6 8L1 3h10L6 8z"/></svg>
+                    </button>
+                    <div class="user-dropdown" id="user-dropdown">
+                        <a href="/Ticket/History" class="dropdown-item">🎫 Vé của tôi</a>
+                        <a href="/Account/Profile" class="dropdown-item">👤 Hồ sơ</a>
+                        <div class="dropdown-divider"></div>
+                        <form asp-controller="Account" asp-action="Logout" method="post" id="logout-form">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="dropdown-item dropdown-item--danger">🚪 Đăng xuất</button>
+                        </form>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <a href="/Account/Login" class="btn-nav-secondary">Đăng nhập</a>
+                <a href="/Account/Register" class="btn-nav-primary">Đăng ký</a>
+            }
+        </div>
+
+        <!-- Mobile Toggle -->
+        <button class="mobile-toggle" id="mobile-toggle" aria-label="Menu">
+            <span></span><span></span><span></span>
+        </button>
+    </div>
+</nav>
+
+<!-- ===== ALERTS từ TempData ===== -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success" id="global-alert">
+        <span>✅ @TempData["Success"]</span>
+        <button onclick="this.parentElement.remove()" class="alert-close">✕</button>
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-error" id="global-alert">
+        <span>❌ @TempData["Error"]</span>
+        <button onclick="this.parentElement.remove()" class="alert-close">✕</button>
+    </div>
+}
+
+<!-- ===== MAIN CONTENT ===== -->
+<main class="main-content">
+    @RenderBody()
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+    <div class="footer-container">
+        <div class="footer-brand">
+            <div class="footer-logo">
+                <span class="brand-neon">NEON</span><span class="brand-flora">·FLORA</span>
+                <span class="brand-tag">CINEMA</span>
+            </div>
+            <p class="footer-tagline">Nơi công nghệ gặp gỡ thiên nhiên.<br>Trải nghiệm điện ảnh vượt giới hạn.</p>
+        </div>
+        <div class="footer-links">
+            <div class="footer-col">
+                <h4>Khám Phá</h4>
+                <a href="/Movie?trangThai=DangChieu">Đang Chiếu</a>
+                <a href="/Movie?trangThai=SapChieu">Sắp Chiếu</a>
+            </div>
+            <div class="footer-col">
+                <h4>Tài Khoản</h4>
+                <a href="/Account/Register">Đăng Ký</a>
+                <a href="/Account/Login">Đăng Nhập</a>
+                <a href="/Ticket/History">Lịch Sử Vé</a>
+            </div>
+            <div class="footer-col">
+                <h4>Liên Hệ</h4>
+                <p>📍 Hà Nội, Việt Nam</p>
+                <p>📞 1900 xxxx</p>
+                <p>✉️ hello@neonflora.vn</p>
+            </div>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>© 2026 NEON-FLORA Cinema. Bảo lưu mọi quyền.</p>
+    </div>
+</footer>
+
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
