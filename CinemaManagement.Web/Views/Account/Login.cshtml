@@ -1,0 +1,56 @@
+@using CinemaManagement.Web.Models.AccountViewModels
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Đăng Nhập";
+    var returnUrl = Model.ReturnUrl;
+}
+
+<div class="form-card">
+    <div class="form-title">
+        <span style="background:linear-gradient(135deg,var(--neon-cyan),var(--neon-purple));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">
+            Chào Mừng Trở Lại
+        </span>
+    </div>
+    <p class="form-subtitle">Đăng nhập bằng số điện thoại đã đăng ký</p>
+
+    <form asp-action="Login" asp-controller="Account" method="post" id="login-form">
+        @Html.AntiForgeryToken()
+        <input asp-for="ReturnUrl" type="hidden" value="@returnUrl" />
+
+        <div asp-validation-summary="ModelOnly" style="color:var(--neon-pink);font-size:0.875rem;margin-bottom:16px;"></div>
+
+        <div class="form-group">
+            <label class="form-label" for="soDienThoai">📱 Số Điện Thoại</label>
+            <input asp-for="SoDienThoai" type="tel" id="soDienThoai" class="form-control"
+                   placeholder="0xxxxxxxxx" required autofocus
+                   pattern="[0-9]{10,11}" maxlength="11" />
+            <span asp-validation-for="SoDienThoai" class="field-validation-error"></span>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="btn-login" style="margin-top:8px;">
+            Đăng Nhập
+        </button>
+    </form>
+
+    <div class="form-divider">hoặc</div>
+
+    <p style="text-align:center; font-size:0.875rem; color:var(--text-secondary);">
+        Chưa có tài khoản?
+        <a href="/Account/Register" style="color:var(--neon-cyan); font-weight:600;">Đăng ký ngay</a>
+    </p>
+</div>
+
+@section Scripts {
+<script>
+// One-Click Shield (RULE-UI-03)
+document.getElementById('login-form')?.addEventListener('submit', function() {
+    const btn = document.getElementById('btn-login');
+    if (!btn) return;
+    btn.disabled = true;
+    btn.textContent = 'Dang dang nhap...';
+    return;
+    this.textContent = 'Đang đăng nhập...';
+    this.closest('form').submit();
+});
+</script>
+}

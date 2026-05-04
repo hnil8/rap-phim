@@ -1,0 +1,99 @@
+@using CinemaManagement.Web.Models.TicketViewModels
+@model TicketHistoryViewModel
+@{
+    ViewData["Title"] = "Lịch Sử Vé";
+    var nhomHoaDon = Model.Orders;
+}
+
+<div class="container page-section">
+    <div class="section-header">
+        <h1 class="section-title">Vé Của Tôi</h1>
+        <span style="color:var(--text-muted); font-size:0.875rem;">@nhomHoaDon.Count đơn</span>
+    </div>
+
+    @if (!nhomHoaDon.Any())
+    {
+        <div class="empty-state">
+            <div class="empty-icon">🎫</div>
+            <div class="empty-title">Chưa có vé nào</div>
+            <div class="empty-text">Đặt vé ngay để tận hưởng những bộ phim tuyệt vời.</div>
+            <a href="/Movie" class="btn btn-primary" id="btn-dat-ve">🎬 Xem Phim</a>
+        </div>
+    }
+    else
+    {
+        <div style="display:flex; flex-direction:column; gap:20px;">
+            @foreach (var group in nhomHoaDon)
+            {
+                var tongTien   = group.TongTien;
+                var trangThai  = group.TrangThai;
+
+                <div style="background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:20px; overflow:hidden;">
+                    <!-- Order Header -->
+                    <div style="padding:16px 20px; border-bottom:1px solid var(--border-subtle); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+                        <div>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">MÃ ĐƠN</span>
+                            <strong style="color:var(--neon-cyan); margin-left:8px;">#@group.HoaDonId.ToString("D6")</strong>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span style="color:var(--neon-cyan); font-weight:700;">@tongTien.ToString("N0")đ</span>
+
+                            @{
+                                var statusClass = trangThai switch {
+                                    "DaBan"       => "status-daban",
+                                    "DaHuy"       => "status-dahuy",
+                                    "DaKiemSoat" => "status-dakiemsoat",
+                                    _             => "status-daban"
+                                };
+                                var statusText = trangThai switch {
+                                    "DaBan"       => "Đã đặt",
+                                    "DaHuy"       => "Đã hủy",
+                                    "DaKiemSoat" => "Đã dùng",
+                                    _             => trangThai
+                                };
+                            }
+                            <span class="ticket-status @statusClass">@statusText</span>
+
+                            @if (group.CanCancel)
+                            {
+                                <form asp-action="Cancel" asp-controller="Ticket" method="post" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="hoaDonId" value="@group.HoaDonId" />
+                                    <button type="submit" class="btn btn-danger btn-sm" id="btn-huy-@group.HoaDonId"
+                                            onclick="return confirm('Bạn có chắc muốn hủy đơn này?')">
+                                        Hủy vé
+                                    </button>
+                                </form>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Ticket Items -->
+                    <div style="padding:16px 20px;">
+                        @foreach (var ve in group.Tickets)
+                        {
+                            <div class="ticket-card" style="margin-bottom:12px;" id="ve-@ve.VeId">
+                                <div class="ticket-qr">🎫</div>
+                                <div class="ticket-info">
+                                    <div class="ticket-movie">@ve.TenPhim</div>
+                                    <div class="ticket-details">
+                                        <span class="ticket-detail-item">🪑 @ve.TenGhe · @ve.LoaiGhe</span>
+                                        <span class="ticket-detail-item">📍 @ve.TenPhong</span>
+                                        <span class="ticket-detail-item">🕐 @ve.GioChieu.ToString("HH:mm dd/MM/yyyy")</span>
+                                        <span class="ticket-detail-item" style="color:var(--neon-cyan); font-weight:600;">@ve.GiaBan.ToString("N0")đ</span>
+                                    </div>
+                                    @if (!string.IsNullOrEmpty(ve.MaVach))
+                                    {
+                                        <div style="margin-top:8px; font-size:0.75rem; color:var(--text-muted); font-family:monospace;">
+                                            QR: @ve.MaVach
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
